@@ -1,1 +1,1 @@
-# generalizedComplexGeometry
+# generalized-complex-geometry

@@ -1,0 +1,823 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% How to use writeLaTeX: 
+%
+% You edit the source code here on the left, and the preview on the
+% right shows you the result within a few seconds.
+%
+% Bookmark this page and share the URL with your co-authors. They can
+% edit at the same time!
+%
+% You can upload figures, bibliographies, custom classes and
+% styles using the files menu.
+%
+% If you're new to LaTeX, the wikibook is a great place to start:
+% http://en.wikibooks.org/wiki/LaTeX
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass{tufte-book}
+
+\hypersetup{colorlinks}% uncomment this line if you prefer colored hyperlinks (e.g., for onscreen viewing)
+
+%%
+% Book metadata
+\title{An introduction to generalized complex geometry\thanks{Thanks to Edward R.~Tufte for his inspiration.}}
+\author[Lennart Döppenschmitt]{Lennart Döppenschmitt}
+\publisher{The University of Zurich}
+
+%%
+% If they're installed, use Bergamo and Chantilly from www.fontsite.com.
+% They're clones of Bembo and Gill Sans, respectively.
+%\IfFileExists{bergamo.sty}{\usepackage[osf]{bergamo}}{}% Bembo
+%\IfFileExists{chantill.sty}{\usepackage{chantill}}{}% Gill Sans
+
+%\usepackage{microtype}
+
+%% math libraries
+\usepackage{amsmath, amsthm, amssymb}
+\usepackage{thmtools}
+\usepackage{latex/pkg/math}
+\usepackage{silence}
+% \WarningFilter{latex}
+% \WarningFilter{latex}{You have requested package}
+
+
+
+%%
+% For nicely typeset tabular material
+\usepackage{booktabs}
+
+%%
+% For graphics / images
+\usepackage{graphicx}
+\setkeys{Gin}{width=\linewidth,totalheight=\textheight,keepaspectratio}
+\graphicspath{{graphics/}}
+
+% The fancyvrb package lets us customize the formatting of verbatim
+% environments.  We use a slightly smaller font.
+\usepackage{fancyvrb}
+\fvset{fontsize=\normalsize}
+
+%%
+% Prints argument within hanging parentheses (i.e., parentheses that take
+% up no horizontal space).  Useful in tabular environments.
+\newcommand{\hangp}[1]{\makebox[0pt][r]{(}#1\makebox[0pt][l]{)}}
+
+%%
+% Prints an asterisk that takes up no horizontal space.
+% Useful in tabular environments.
+\newcommand{\hangstar}{\makebox[0pt][l]{*}}
+
+
+
+
+
+
+% new environments
+\newcounter{example}[section]
+\newenvironment{example}[1][]{\refstepcounter{example}\par\medskip
+   \noindent \textbf{Example~\theexample. #1} \rmfamily}{\medskip}
+
+\newenvironment{definition}[1][]{\refstepcounter{example}\par\medskip
+   \noindent \textbf{Definition~\theexample. #1} \rmfamily}{\medskip}
+
+\newenvironment{lemma}[1][]{\refstepcounter{example}\par\medskip
+   \noindent \textbf{Lemma~\theexample. #1} \rmfamily}{\medskip}
+
+% \newcounter{remark}[section]
+\newenvironment{remark}[1][]{\refstepcounter{example}\par\medskip
+   \noindent \textbf{Remark~\theexample. #1} \rmfamily}{\medskip}
+
+% \newcounter{theorem}[section]
+\newenvironment{theorem}[1][]{\refstepcounter{example}\par\medskip
+   \noindent \textbf{Theorem~\theexample. #1} \rmfamily}{\medskip}
+
+% \newcounter{exercise}[section]
+\newenvironment{exercise}[1][]{\refstepcounter{example}\par\medskip
+   \noindent \textbf{Exercise~\theexample. #1} \rmfamily}{\medskip}
+
+% Better spacing than regular itemize
+\newenvironment{itemize*}
+  {\begin{itemize}[topsep=-\parskip+\jot,itemsep=-\parskip-\jot]}
+  {\end{itemize}}
+
+% Better spacing than regular enumerate, (a), (b), ...
+\newenvironment{enumerate*}
+  {\begin{enumerate}[label=(\alph*),topsep=-\parskip+\jot,itemsep=-\parskip-\jot]}
+  {\end{enumerate}}
+
+% Better spacing than regular enumerate, (i), (ii), ...
+\newenvironment{enumerate**}
+  {\begin{enumerate}[label=(\roman*),topsep=-\parskip+\jot,itemsep=-\parskip-\jot]}
+  {\end{enumerate}}
+
+% Better spacing than regular enumerate, (a'), (b'), ...
+\newenvironment{enumerate***}
+  {\begin{enumerate}[label=(\alph*'),topsep=-\parskip+\jot,itemsep=-\parskip-\jot]}
+  {\end{enumerate}}
+
+
+
+
+%%
+% Prints a trailing space in a smart way.
+\usepackage{xspace}
+
+%%
+% Some shortcuts for Tufte's book titles.  The lowercase commands will
+% produce the initials of the book title in italics.  The all-caps commands
+% will print out the full title of the book in italics.
+\newcommand{\vdqi}{\textit{VDQI}\xspace}
+\newcommand{\ei}{\textit{EI}\xspace}
+\newcommand{\ve}{\textit{VE}\xspace}
+\newcommand{\be}{\textit{BE}\xspace}
+\newcommand{\VDQI}{\textit{The Visual Display of Quantitative Information}\xspace}
+\newcommand{\EI}{\textit{Envisioning Information}\xspace}
+\newcommand{\VE}{\textit{Visual Explanations}\xspace}
+\newcommand{\BE}{\textit{Beautiful Evidence}\xspace}
+
+\newcommand{\TL}{Tufte-\LaTeX\xspace}
+
+% Prints the month name (e.g., January) and the year (e.g., 2008)
+\newcommand{\monthyear}{%
+  \ifcase\month\or January\or February\or March\or April\or May\or June\or
+  July\or August\or September\or October\or November\or
+  December\fi\space\number\year
+}
+
+
+% Prints an epigraph and speaker in sans serif, all-caps type.
+\newcommand{\openepigraph}[2]{%
+  %\sffamily\fontsize{14}{16}\selectfont
+  \begin{fullwidth}
+  \sffamily\large
+  \begin{doublespace}
+  \noindent\allcaps{#1}\\% epigraph
+  \noindent\allcaps{#2}% author
+  \end{doublespace}
+  \end{fullwidth}
+}
+
+% Inserts a blank page
+\newcommand{\blankpage}{\newpage\hbox{}\thispagestyle{empty}\newpage}
+
+\usepackage{units}
+
+% Typesets the font size, leading, and measure in the form of 10/12x26 pc.
+\newcommand{\measure}[3]{#1/#2$\times$\unit[#3]{pc}}
+
+% Macros for typesetting the documentation
+\newcommand{\hlred}[1]{\textcolor{Maroon}{#1}}% prints in red
+\newcommand{\hangleft}[1]{\makebox[0pt][r]{#1}}
+\newcommand{\hairsp}{\hspace{1pt}}% hair space
+\newcommand{\hquad}{\hskip0.5em\relax}% half quad space
+\newcommand{\TODO}{\textcolor{red}{\bf TODO!}\xspace}
+\newcommand{\ie}{\textit{i.\hairsp{}e.}\xspace}
+\newcommand{\eg}{\textit{e.\hairsp{}g.}\xspace}
+\newcommand{\na}{\quad--}% used in tables for N/A cells
+\providecommand{\XeLaTeX}{X\lower.5ex\hbox{\kern-0.15em\reflectbox{E}}\kern-0.1em\LaTeX}
+\newcommand{\tXeLaTeX}{\XeLaTeX\index{XeLaTeX@\protect\XeLaTeX}}
+% \index{\texttt{\textbackslash xyz}@\hangleft{\texttt{\textbackslash}}\texttt{xyz}}
+\newcommand{\tuftebs}{\symbol{'134}}% a backslash in tt type in OT1/T1
+\newcommand{\doccmdnoindex}[2][]{\texttt{\tuftebs#2}}% command name -- adds backslash automatically (and doesn't add cmd to the index)
+\newcommand{\doccmddef}[2][]{%
+  \hlred{\texttt{\tuftebs#2}}\label{cmd:#2}%
+  \ifthenelse{\isempty{#1}}%
+    {% add the command to the index
+      \index{#2 command@\protect\hangleft{\texttt{\tuftebs}}\texttt{#2}}% command name
+    }%
+    {% add the command and package to the index
+      \index{#2 command@\protect\hangleft{\texttt{\tuftebs}}\texttt{#2} (\texttt{#1} package)}% command name
+      \index{#1 package@\texttt{#1} package}\index{packages!#1@\texttt{#1}}% package name
+    }%
+}% command name -- adds backslash automatically
+\newcommand{\doccmd}[2][]{%
+  \texttt{\tuftebs#2}%
+  \ifthenelse{\isempty{#1}}%
+    {% add the command to the index
+      \index{#2 command@\protect\hangleft{\texttt{\tuftebs}}\texttt{#2}}% command name
+    }%
+    {% add the command and package to the index
+      \index{#2 command@\protect\hangleft{\texttt{\tuftebs}}\texttt{#2} (\texttt{#1} package)}% command name
+      \index{#1 package@\texttt{#1} package}\index{packages!#1@\texttt{#1}}% package name
+    }%
+}% command name -- adds backslash automatically
+\newcommand{\docopt}[1]{\ensuremath{\langle}\textrm{\textit{#1}}\ensuremath{\rangle}}% optional command argument
+\newcommand{\docarg}[1]{\textrm{\textit{#1}}}% (required) command argument
+\newenvironment{docspec}{\begin{quotation}\ttfamily\parskip0pt\parindent0pt\ignorespaces}{\end{quotation}}% command specification environment
+\newcommand{\docenv}[1]{\texttt{#1}\index{#1 environment@\texttt{#1} environment}\index{environments!#1@\texttt{#1}}}% environment name
+\newcommand{\docenvdef}[1]{\hlred{\texttt{#1}}\label{env:#1}\index{#1 environment@\texttt{#1} environment}\index{environments!#1@\texttt{#1}}}% environment name
+\newcommand{\docpkg}[1]{\texttt{#1}\index{#1 package@\texttt{#1} package}\index{packages!#1@\texttt{#1}}}% package name
+\newcommand{\doccls}[1]{\texttt{#1}}% document class name
+\newcommand{\docclsopt}[1]{\texttt{#1}\index{#1 class option@\texttt{#1} class option}\index{class options!#1@\texttt{#1}}}% document class option name
+\newcommand{\docclsoptdef}[1]{\hlred{\texttt{#1}}\label{clsopt:#1}\index{#1 class option@\texttt{#1} class option}\index{class options!#1@\texttt{#1}}}% document class option name defined
+\newcommand{\docmsg}[2]{\bigskip\begin{fullwidth}\noindent\ttfamily#1\end{fullwidth}\medskip\par\noindent#2}
+\newcommand{\docfilehook}[2]{\texttt{#1}\index{file hooks!#2}\index{#1@\texttt{#1}}}
+\newcommand{\doccounter}[1]{\texttt{#1}\index{#1 counter@\texttt{#1} counter}}
+
+
+\DeclareDocumentCommand{\vpv}{}{V \oplus V^{*}}
+\DeclareDocumentCommand{\V}{}{\mathbb{V}}
+\DeclareDocumentCommand{\so}{}{\mathfrak{so}}
+\DeclareDocumentCommand{\a}{}{\mathfrak{a}}
+\DeclareDocumentCommand{\SO}{}{SO}
+
+% Generates the index
+\usepackage{makeidx}
+\makeindex
+
+\begin{document}
+
+% Front matter
+\frontmatter
+
+% r.1 blank page
+% \blankpage
+
+% v.2 epigraphs
+% \newpage\thispagestyle{empty}
+% \openepigraph{%
+% The public is more familiar with bad design than good design.
+% It is, in effect, conditioned to prefer bad design, 
+% because that is what it lives with. 
+% The new becomes threatening, the old reassuring.
+% }{Paul Rand%, {\itshape Design, Form, and Chaos}
+% }
+% \vfill
+% \openepigraph{%
+% A designer knows that he has achieved perfection 
+% not when there is nothing left to add, 
+% but when there is nothing left to take away.
+% }{Antoine de Saint-Exup\'{e}ry}
+% \vfill
+% \openepigraph{%
+% \ldots the designer of a new system must not only be the implementor and the first 
+% large-scale user; the designer should also write the first user manual\ldots 
+% If I had not participated fully in all these activities, 
+% literally hundreds of improvements would never have been made, 
+% because I would never have thought of them or perceived 
+% why they were important.
+% }{Donald E. Knuth}
+
+
+% r.3 full title page
+\maketitle
+
+
+% v.4 copyright page
+% \newpage
+% \begin{fullwidth}
+% ~\vfill
+% \thispagestyle{empty}
+% \setlength{\parindent}{0pt}
+% \setlength{\parskip}{\baselineskip}
+% Copyright \copyright\ \the\year\ \thanklessauthor
+
+% \par\smallcaps{Published by \thanklesspublisher}
+
+% \par\smallcaps{tufte-latex.googlecode.com}
+
+% \par Licensed under the Apache License, Version 2.0 (the ``License''); you may not
+% use this file except in compliance with the License. You may obtain a copy
+% of the License at \url{http://www.apache.org/licenses/LICENSE-2.0}. Unless
+% required by applicable law or agreed to in writing, software distributed
+% under the License is distributed on an \smallcaps{``AS IS'' BASIS, WITHOUT
+% WARRANTIES OR CONDITIONS OF ANY KIND}, either express or implied. See the
+% License for the specific language governing permissions and limitations
+% under the License.\index{license}
+
+% \par\textit{First printing, \monthyear}
+% \end{fullwidth}
+
+% r.5 contents
+\tableofcontents
+
+% \listoffigures
+
+% \listoftables
+
+% r.7 dedication
+% \cleardoublepage
+% ~\vfill
+% \begin{doublespace}
+% \noindent\fontsize{18}{22}\selectfont\itshape
+% \nohyphenation
+% Dedicated to those who appreciate \LaTeX{} 
+% and the work of \mbox{Edward R.~Tufte} 
+% and \mbox{Donald E.~Knuth}.
+% \end{doublespace}
+% \vfill
+% \vfill
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter*{Introduction}
+
+
+These notes grew out of an introductory course on generalized complex geometry taught
+in the fall of 2022 at the University of Zurich. None of the content is original to the
+author of these notes. The author would like to thank 
+
+\lb
+This course is far from a complete account of the subject, instead the aim is to
+get a quick overview and work towards essential milestones in the development of generalied
+geometry.
+
+
+\lb
+{\bf Generalized reduction.}
+Review symplectic and holomorphic reduction.
+\begin{enumerate}
+    \item stienonXu2007
+    \item zambon2008 generalization of coisotropic reduction
+    \item bursztynCavalcantiGualtieri2006
+\end{enumerate}
+There are no real punch line examples. What about the GC structure on the instanton moduli
+space? from bursztynCavalcantiGualtieri2013?
+
+
+
+\lb
+{\bf Generalized Kähler structures?}
+This really goes into sigma models and super symmetry as examples.
+I know a lot of about this topic, that would make it easier to prepare
+
+
+\lb
+Branes in prequantization and physics?
+\begin{enumerate}
+    \item kapustinOrlov
+\end{enumerate}
+
+
+
+\lb
+{ \bf GCG and supersymmetry?}
+kapustinLi2005 for a discussion of sigma models, supersymmetry and generalized
+complex structures.
+This could also lead to T duality?
+
+
+
+
+
+
+% This sample book discusses the design of Edward Tufte's
+% books\cite{Tufte2001,Tufte1990,Tufte1997,Tufte2006}
+% and the use of the \doccls{tufte-book} and \doccls{tufte-handout} document classes.
+
+
+%%
+% Start the main matter (normal chapters)
+% \mainmatter
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\chapter{Geometric structures from differential forms}
+\label{ch:ZT1VUV}
+\marginnote{ZT1VUV}
+
+To revisit a few classical geometric structures and become accustomed with
+notation and conventions, we will dive into geometric structures provided by differentia forms
+and explore their integrability conditions.
+\footnotetext{This contains Poisson geometry. This is a side note}
+
+\section{Background}
+
+\newthought{We will assume} throughout this course that $M$ is a smooth manifold. \index{manifold}
+Whenever we use a category, it will be in a \texttt{monospaced} font, like so.
+\sidenote{this is a side note about categories.}
+What about other equations?
+$$\sum _{i = 0} i^{2}$$
+\marginnote{This is a rather unconventional summation.}
+This is supposed to be \hlred{red}.
+
+
+\begin{figure}
+    \centering
+    \begin{tikzpicture}[scale=1.3]
+    \node (m) at (0,0) {$(M, Q)$};
+    \node (s) at (1,1) {$(S, ω)$};
+    \node (n) at (2,0) {$(N, P)$};
+    \draw[->](s) -- node[above left] {$π_{M}$} (m);
+    \draw[->](s) -- node[above right] {$π_{N}$} (n);
+    \end{tikzpicture}
+    \caption{This is a Poisson span}
+    \label{fig:NIYJS9}
+\end{figure}
+
+
+
+
+
+
+
+
+
+
+\section{Foliations}
+
+
+
+
+
+\subsection{Reeb Foliation}
+
+
+
+
+
+
+\section{Reduction of structure group}
+
+A very popular and powerful perspective on geometric structures is the reductio of structure
+groups. 
+
+\marginnote{compare from shaffhauser2009 Proposition 2.3}
+
+\lb
+An oriented Riemannian $n$-manifold $(M, g)$ corresponds to a reduction to $SO(n)$.
+
+\lb
+A complex structure is a reduction from $GL_{n}$ to $U(n)$.
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{$V \oplus V^{*}$}
+
+
+\lb
+We're using \cite{gualtieri2004},
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Linear Algebra}
+
+\lb
+Let $V$ be a real vector space of dimension $n$. This chapter is devoted to the Linear algebra of
+the vector space $V \oplus V^{*}$.
+\marginnote{marcut0000}
+
+\lb
+$V \oplus V^{*}$ always carries a bilinear, symmetric pairing
+$$\ab{X + ξ, Y + η} = ½ ( ξ(Y) + η(X))$$
+for $X, Y ∈ V$ and $ξ, η ∈ V^{*}$.
+Let $e_{1}, \ldots e_{n}$ be a basis of $V$ and $e^{1}, \ldots, e^{n}$ its dual basis. We choose
+their union as a basis of $V \oplus V^{*}$ and compute
+$$A_{\ab{~}} = \begin{pmatrix} 0 & \bb 1_{n} \\ \bb 1_{n} & 0 \end{pmatrix} $$
+This shows that the canonical pairing $\ab{~}$ is nondegenerate and has signature $(n, n)$.
+\marginnote{I could make this into an exercise.}
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Symmetries}
+As any metric space, we can consider symmetries
+$$SO(\vpv) = $$
+
+
+
+
+
+\lb
+The special orthogonal Lie algebra $\so(V \oplus V^{*})$ is identified with
+\marginnote{For a metric vector space $(W, g)$ we use here the correspondence between $\so(W, g) ≅ Λ^{2} W$ that identifies
+$u ∧ v$ with $u g(v) - v g(u)$ for two elements $u, v ∈ W$.}
+$Λ^{2}(\vpv) = Λ^{2}V \oplus V \otimes V^{*} \oplus Λ^{2}V^{*}$.
+Elements are possibly of the form
+$$β + A + B$$
+
+\lb
+We start by investigating $B ∈ Λ^{2}V^{*}$.
+Write $B = B_{ij} e^{i} ∧ e^{j}$ in the same basis $e^{1}, \ldots, e^{n}$ as before.
+Pick an arbitrary element $X + ξ ∈ \vpv$ and compute
+\begin{align*}
+    B ∙ (X + ξ) &= B_{ij} e^{j} \ab{e^{i}, X + ξ} - B_{ij}e^{i} \ab{e^{j}, X + ξ} \\
+                &= B_{ij} e^{j} e^{i}(X) - B_{ij}e^{i} e^{j} (X) \\
+                &= ι_{X} ( B_{ij}e^{i} ∧ e^{j}) \\
+                &= ι_{X}B
+\end{align*}
+
+\lb
+In particular, we notice that $B^{2} = 0$. This lets us compute its exponential
+$e^{B} ∈ SO(\vpv)$ as follows
+$$ e^{B}(X + ξ) = (1 + B + ½B^{2} + \cdots) (X + ξ) = X + ξ + ι_{X} B $$
+This symmetry has the form of a shear transformation and is commonly referred to
+as the $B$-field transform.
+$$e^{B} = \begin{pmatrix} 1 & 0 \\ B & 1 \end{pmatrix} $$
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Isotropic subspaces}
+
+
+
+
+A subspace $U ⊆ V$ in a metric space $(V, g)$ has a complement
+$$U┴ = \cb{x ∈ V │ g(x, u) = 0 \tx{ for all } u ∈ U}$$
+
+\lb
+A subspace $U ⊆ V$ is \emph{isotropic} if $U ⊆ U ┴$. In other words,
+$g \at{U} = 0 $. We call a subspace $U$ \emph{coisotropic} if $U ┴ ⊆ U$.
+
+\marginnote{Exercise: Shat that $U^{*}$ is coisotropic if $U$ is isotropic.}
+
+\lb
+For our split signature metric $\ab{~}$
+an isotropic subspace $W ∈ \vpv$ can have at most dimension $n$. If it has
+dimension $n$, we call it \emph{maximally isotropic} or \emph{Lagrangian}.
+\marginnote{This name comes from maximally isotropic subspaces of symplectic
+vector spaces $(V, ω)$.}
+This is the case if $W$ is both isotropic and coisotropic
+\marginnote{Exercise: Shat that $L ⊆ \vpv$ is Lagrangian iff it is isotropic and coisotropic.}
+
+
+
+
+\begin{example}
+    $V$ and $V^{*}$ are both maximally isotropic subspaces of $\vpv$.
+\end{example}
+
+
+
+
+\begin{example}
+    One way to construct a maximally isotropic subspace of $\vpv$ is to start with a
+    subspace $U ⊆ V$ and consider
+    $$U \oplus Ann(U) ⊆ \vpv$$
+    \marginnote{The Annihilator of a subspace is precisely the subspace $Ann(U)$ of $V^{*}$
+    of covectors $α$ which restrict to zero on $U$, that is, $α \at{U} = 0$.}
+    This subspace is clearly isotropic and of maximal dimension because
+    $$ \dim Ann(U) + dim (U) = \dim(V) = n $$
+\end{example}
+
+
+
+
+\begin{lemma}
+    Every maximal isotropic $L ∈ \vpv$ is of the form $L(E, ε)$
+\end{lemma}
+
+
+
+\lb
+A $B$-field transform $B ∈ Λ^{2}V^{*}$ affects subspaces $L ⊆ \vpv$.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Spinors}
+
+
+\lb
+Given a metric vector space $(W, g)$,
+Spinors arise as a hidden representation of the Lie algebra of special
+orthogonal transformations $\so(W, g)$. This does not correspond to a representation
+of $\SO(W, g)$ when it is not simply connected.
+\marginnote{Reference needed, also suggested reading}
+Instead, one constructs the universal cover, called the spin group $Spin(W, g)$ as a certain
+set contained in the Clifford algebra $Cl(W, g)$.
+\marginnote{More details can be found in wernli2019}
+
+\lb
+The important application of spinors in our situation is as a means to encode maximally
+isotropic subspaces of $\vpv$.
+
+
+\begin{definition}
+    The \emph{Clifford algebra} of a metric vector space $(W, g)$ is the quotient of the
+    tensor algebra of $W$ by the relation $v^{2} = g(v, v) 1$.
+\end{definition}
+\marginnote{Why is this equivalent to the relation $vw + wv = 2 g(v, w)$? wernli2019}
+
+\lb
+General properties of the Clifford algebra.
+
+
+
+\begin{definition}
+    The Spin group of $(W, g)$ consists of the 
+\end{definition}
+
+
+\lb
+The adjoint representation stabilizes $W ん Cl_{W}$.
+A vector $v ∈ W$ acts as a reflection across the $g$-orthogonal complement of $v$.
+
+\begin{exercise}
+    \begin{enumerate}
+        \item Describe the action of an element $uv ∈ Cl_{W}$ on $w ∈ W$.
+        \item How is the action of $-uv$ different?
+    \end{enumerate}
+\end{exercise}
+
+\lb
+The conclusion of this exercise should be that the standard representation of
+$Spin(W)$ on $W$ is blind to certain subtle differences. We need spinors to detect these
+differences.
+
+
+
+
+
+\lb
+To construct spinors for $\V = \vpv$, we can take advantage of the split signature metric.
+
+
+
+
+\lb
+Now that we have spinors for $\V$, we can use the following.
+
+\lb
+Let $φ ∈ Λ^{●} V^{*}$ be a spinor. Its \emph{null space} $L_{φ}$ is the subspace in $\vpv$
+$$L_{φ} = \cb{v ∈ \vpv │ v ∙ φ = 0 }$$
+Null spaces of spinors are always isotropic. When $L_{φ}$ is maximally isotropic, we call
+the spinor $φ$ \emph{pure}.
+
+
+
+
+
+
+
+
+
+\section{Exercises}
+
+\begin{exercise}
+    Show that $SO(n)$ is not simply connected for any $n \geq 2$.
+    \marginnote{taken from debray2016}
+\end{exercise}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Exact Courant algebroids}
+
+
+
+\lb
+The reason we focussed intensively on the linear algebra of $\vpv$ is that it is
+precisely the generic fiber of the generalized tangent bundle $TM \oplus T^{*}M$ of
+an $n$-manifold $M$. This is the central object of interest in the study of generalized
+complex geometry as it is hosting generalized complex structures which we will define in
+the next chapter. For now, we will explore the geometric properties of $TM \oplus T^{*}M$
+as a Courant algebroid.
+We will assume throughout this chapter that $M$ is a smooth manifold.
+
+
+\section{Lie algebroids}
+
+In fact, we will start with yet another simplification to get acustomed with the world
+of *-oids.
+
+\begin{definition}
+    A Lie algebroid $(A, [~], \a)$ on $M$ is a vector bundle $A → M$ with a Lie bracket
+    $[~]$ on the space of sections $Γ(A)$ and a bundle map $\map{A}[\a]{TM}$ such that
+    \begin{enumerate}
+        \item conditions
+    \end{enumerate}
+    \done
+\end{definition}
+
+
+\lb
+A Poisson structure $Q$ on $M$ defines a bracket on 1-forms $Ω^{1}_{M}$.
+$$[a, b]_{Q} = L_{Q(a)} b - L_{Q(b)} a - d Q(a, b)$$
+This is the \emph{Koszul bracket} which is the unique extension of the Poisson bracket
+on exact 1-forms that satisfies...
+
+
+\begin{example}
+    \begin{enumerate}
+        \item Poisson Lie algebroid
+        \item Foliations are Lie algebroids if they are integrable
+        \item Atiyah algebroid of a principal bundle
+        \item $T_{1,0}X$ of a complex manifold is Lie algebroid on its underlying
+            smooth manifold.
+    \end{enumerate}
+    \done
+\end{example}
+
+
+
+
+
+
+\section{Courant algebroids}
+
+
+\lb
+Failure to be a Lie algebroid.
+Exactness, twists and Severa class.
+Symmetries of Courant algebroids.
+
+Examples like
+
+Other higher Courant algebroids like $T \oplus \R \oplus T^{*}$
+
+
+
+
+
+
+
+
+
+
+\chapter{Structures on Courant algebroids}
+
+
+\lb
+Generalized complex structures
+
+\marginnote{hu2006 for Hamiltonian symmetries of a GC structure}
+\marginnote{bursztyn2011 for Dirac structures.}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% The back matter contains appendices, bibliographies, indices, glossaries, etc.
+\backmatter
+\bibliographystyle{plain}
+\bibliography{latex/bib/b}
+\printindex
+\end{document}
